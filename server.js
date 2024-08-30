@@ -17,7 +17,7 @@ api.get('/', (req, res) => {
 })
 
 // Rota POST para criar um novo recurso
-api.post('/cliente/novo', (req, res) => {
+api.post('/client/novo', (req, res) => {
     // Obtém os dados do corpo da requisição
     const { nome, idade, cpf } = req.body;
 
@@ -86,6 +86,31 @@ api.put('/client/update/cpf/:cpf', (req, res) => {
     });
 });
 
+
+// Rota DELETE para remover um cliente pelo CPF
+api.delete('/client/delete/cpf/:cpf', (req, res) => {
+    const { cpf } = req.params;
+
+    // Encontra o índice do cliente com o CPF fornecido
+    const clienteIndex = recursos.findIndex(r => r.cpf === cpf);
+
+    if (clienteIndex === -1) {
+        return res.status(404).json({
+            mensagem: 'Cliente não encontrado',
+            status: 404
+        });
+    }
+
+    // Remove o cliente do array
+    const [clienteRemovido] = recursos.splice(clienteIndex, 1);
+
+    // Responde com a confirmação de exclusão
+    res.status(200).json({
+        mensagem: 'Cliente removido com sucesso',
+        status: 200,
+        recurso: clienteRemovido
+    });
+});
 
 api.listen(porta, () => {
     console.log(`Servidor em execução na porta ${porta}`)

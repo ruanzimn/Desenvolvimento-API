@@ -17,7 +17,7 @@ api.get('/', (req, res) => {
 })
 
 // Rota POST para criar um novo recurso
-api.post('/', (req, res) => {
+api.post('/cliente/novo', (req, res) => {
     // Obtém os dados do corpo da requisição
     const { nome, idade, cpf } = req.body;
 
@@ -45,6 +45,44 @@ api.post('/', (req, res) => {
         mensagem: 'Cliente criado com sucesso',
         status: 201,
         recurso: novoRecurso
+    });
+});
+
+//PUT
+api.put('/client/update/cpf/:cpf', (req, res) => {
+    const { cpf } = req.params;
+    const { nome, idade } = req.body;
+
+    // Verifica se todos os dados necessários estão presentes
+    if (!nome || !idade) {
+        return res.status(400).json({
+            mensagem: 'Dados do cliente incompletos',
+            status: 400
+        });
+    }
+
+    // Encontra o cliente com o CPF fornecido
+    const clienteIndex = recursos.findIndex(r => r.cpf === cpf);
+
+    if (clienteIndex === -1) {
+        return res.status(404).json({
+            mensagem: 'Cliente não encontrado',
+            status: 404
+        });
+    }
+
+    // Atualiza o cliente
+    recursos[clienteIndex] = {
+        ...recursos[clienteIndex],
+        nome,
+        idade
+    };
+
+    // Responde com a confirmação de atualização
+    res.status(200).json({
+        mensagem: 'Cliente atualizado com sucesso',
+        status: 200,
+        recurso: recursos[clienteIndex]
     });
 });
 
